@@ -1,0 +1,66 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitboxx.Web.GeneratedImage", "Bitboxx.Web.GeneratedImage\Bitboxx.Web.GeneratedImage.csproj", "{CC4399BC-FC0A-4247-AAF5-17D9A6C24FF1}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Web", "Web", "{E932E041-20D3-452B-A28B-F64B59567958}"
+	ProjectSection(WebsiteProperties) = preProject
+		SccProjectName = "SAK"
+		SccAuxPath = "SAK"
+		SccLocalPath = "SAK"
+		SccProvider = "SAK"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		ProjectReferences = "{CC4399BC-FC0A-4247-AAF5-17D9A6C24FF1}|Bitboxx.Web.GeneratedImage.dll;"
+		Debug.AspNetCompiler.VirtualPath = "/Web"
+		Debug.AspNetCompiler.PhysicalPath = "Web\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\Web\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/Web"
+		Release.AspNetCompiler.PhysicalPath = "Web\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\Web\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "1409"
+		DefaultWebSiteLanguage = "Visual C#"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 3
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs30
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Bitboxx.Web.GeneratedImage\\Bitboxx.Web.GeneratedImage.csproj
+		SccProjectName1 = Bitboxx.Web.GeneratedImage
+		SccLocalPath1 = Bitboxx.Web.GeneratedImage
+		SccWebProject2 = true
+		SccProjectUniqueName2 = Web
+		SccProjectName2 = Web
+		SccLocalPath2 = Web
+		SccProjectEnlistmentChoice2 = 2
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = GeneratedImage.vsmdi
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CC4399BC-FC0A-4247-AAF5-17D9A6C24FF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC4399BC-FC0A-4247-AAF5-17D9A6C24FF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC4399BC-FC0A-4247-AAF5-17D9A6C24FF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC4399BC-FC0A-4247-AAF5-17D9A6C24FF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E932E041-20D3-452B-A28B-F64B59567958}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E932E041-20D3-452B-A28B-F64B59567958}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E932E041-20D3-452B-A28B-F64B59567958}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{E932E041-20D3-452B-A28B-F64B59567958}.Release|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
