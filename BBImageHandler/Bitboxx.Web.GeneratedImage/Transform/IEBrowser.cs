@@ -9,6 +9,7 @@
 
 using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -27,7 +28,7 @@ namespace Bitboxx.Web.GeneratedImage.Transform
 			Thread thrd = new Thread(new ThreadStart(
 			                         	delegate {
 			                         	         	Init(target,ratio);
-			                         	         	System.Windows.Forms.Application.Run(this);
+			                         	         	Application.Run(this);
 			                         	})); 
 			// set thread to STA state before starting
 			thrd.SetApartmentState(ApartmentState.STA);
@@ -65,7 +66,7 @@ namespace Bitboxx.Web.GeneratedImage.Transform
 			{
 				WebBrowser browser = (WebBrowser)sender;
 				HtmlDocument doc = browser.Document;
-				if (_html != string.Empty)
+				if (_html != String.Empty)
 				{
 					doc.OpenNew(true);
 					doc.Write(_html);
@@ -89,11 +90,12 @@ namespace Bitboxx.Web.GeneratedImage.Transform
 				}
 	
 				Bitmap bitmap = new Bitmap(browser.Width, browser.Height);
-				browser.DrawToBitmap(bitmap, new Rectangle(0, 0, browser.Width, browser.Height));
+				GetImage(browser.ActiveXInstance, bitmap, Color.White);
+				
 				browser.Dispose();
 				Thumb = (Image) bitmap;
 			}
-			catch (System.Exception)
+			catch (Exception)
 			{
 			}
 			finally
@@ -101,6 +103,52 @@ namespace Bitboxx.Web.GeneratedImage.Transform
 				ResultEvent.Set();
 			}
 
+		}
+
+		[ComImport]
+		[Guid("0000010D-0000-0000-C000-000000000046")]
+		[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+		private interface IViewObject
+		{
+			void Draw([MarshalAs(UnmanagedType.U4)] uint dwAspect, int lindex, IntPtr pvAspect, [In] IntPtr ptd, IntPtr hdcTargetDev, IntPtr hdcDraw, [MarshalAs(UnmanagedType.Struct)] ref RECT lprcBounds, [In] IntPtr lprcWBounds, IntPtr pfnContinue, [MarshalAs(UnmanagedType.U4)] uint dwContinue);
+		}
+
+		[StructLayout(LayoutKind.Sequential, Pack = 4)]
+		private struct RECT
+		{
+			public int Left;
+			public int Top;
+			public int Right;
+			public int Bottom;
+		}
+
+		public static void GetImage(object obj, Image destination, Color backgroundColor)
+		{
+			using (Graphics graphics = Graphics.FromImage(destination))
+			{
+				IntPtr deviceContextHandle = IntPtr.Zero;
+				RECT rectangle = new RECT();
+
+				rectangle.Right = destination.Width;
+				rectangle.Bottom = destination.Height;
+
+				graphics.Clear(backgroundColor);
+
+				try
+				{
+					deviceContextHandle = graphics.GetHdc();
+
+					IViewObject viewObject = obj as IViewObject;
+					viewObject.Draw(1, -1, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, deviceContextHandle, ref rectangle, IntPtr.Zero, IntPtr.Zero, 0);
+				}
+				finally
+				{
+					if (deviceContextHandle != IntPtr.Zero)
+					{
+						graphics.ReleaseHdc(deviceContextHandle);
+					}
+				}
+			}
 		}
 	}
 }
