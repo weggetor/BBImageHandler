@@ -43,6 +43,7 @@
       <HintPath>..\Web\Bin\Microsoft.ApplicationBlocks.Data.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -57,7 +58,16 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BBImageHandler.cs" />
     <Compile Include="ImageQuantization\GrayscaleQuantizer.cs" />
+    <Compile Include="Transform\ImagePlaceHolderTransform.cs" />
+    <Compile Include="Transform\ImageRotateFlipTransform.cs" />
+    <Compile Include="Transform\ImageInvertTransform.cs" />
+    <Compile Include="Transform\ImageGreyscaleTransform.cs" />
+    <Compile Include="Transform\ImageContrastTransform.cs" />
+    <Compile Include="Transform\ImageBrightnessTransform.cs" />
+    <Compile Include="Transform\ImageGammaTransform.cs" />
+    <Compile Include="Transform\ImagePercentageTransform.cs" />
     <Compile Include="Transform\ImageDbTransform.cs" />
     <Compile Include="Transform\IEBrowser.cs" />
     <Compile Include="Transform\ImageCounterTransform.cs" />
@@ -91,6 +101,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>WebResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bbimagehandler.ashx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

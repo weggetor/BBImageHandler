@@ -16,48 +16,46 @@ namespace Bitboxx.Web.GeneratedImage
         /// Enables server-side caching of the result
         /// </summary>
         public bool EnableServerCache {
-            get {
-                return Implementation.EnableServerCache;
-            }
-            set {
-                Implementation.EnableServerCache = value;
-            }
+            get { return Implementation.EnableServerCache; }
+            set { Implementation.EnableServerCache = value; }
         }
 
         /// <summary>
         /// Enables client-side caching of the result
         /// </summary>
         public bool EnableClientCache {
-            get {
-                return Implementation.EnableClientCache;
-            }
-            set {
-                Implementation.EnableClientCache = value;
-            }
+            get { return Implementation.EnableClientCache; }
+            set { Implementation.EnableClientCache = value; }
         }
 
         /// <summary>
         /// Sets the client-side cache expiration time
         /// </summary>
         public TimeSpan ClientCacheExpiration {
-            get {
-                return Implementation.ClientCacheExpiration;
-            }
-            set {
-                Implementation.ClientCacheExpiration = value;
-            }
+            get { return Implementation.ClientCacheExpiration;}
+            set { Implementation.ClientCacheExpiration = value; }
         }
+
+	    /// <summary>
+	    /// List of Domains who are allowed to use the imagehandler when security is enabled
+	    /// </summary>
+		public string[] AllowedDomains
+	    {
+			get { return Implementation.AllowedDomains; }
+			set { Implementation.AllowedDomains = value; }
+	    }
+	    public bool EnableSecurityExceptions
+	    {
+			get { return Implementation.EnableSecurityExceptions; }
+			set { Implementation.EnableSecurityExceptions = value; }
+	    }
 
         /// <summary>
         /// Sets the type of the result image. The handler will return ouput with MIME type matching this content
         /// </summary>
         public ImageFormat ContentType {
-            get {
-                return Implementation.ContentType;
-            }
-            set {
-                Implementation.ContentType = value;
-            }
+            get { return Implementation.ContentType; }
+            set { Implementation.ContentType = value; }
         }
 
 		/// <summary>
@@ -65,14 +63,8 @@ namespace Bitboxx.Web.GeneratedImage
 		/// </summary>
 		public long ImageCompression
 		{
-			get
-			{
-				return Implementation.ImageCompression;
-			}
-			set
-			{
-				Implementation.ImageCompression = value;
-			}
+			get { return Implementation.ImageCompression; }
+			set { Implementation.ImageCompression = value; }
 		}
 
     	public bool EnableSecurity = true;
@@ -81,9 +73,7 @@ namespace Bitboxx.Web.GeneratedImage
         /// A list of image transforms that will be applied successively to the image
         /// </summary>
         protected List<ImageTransform> ImageTransforms {
-            get {
-                return Implementation.ImageTransforms;
-            }
+            get { return Implementation.ImageTransforms; }
         }
 
         protected ImageHandler()
@@ -109,19 +99,43 @@ namespace Bitboxx.Web.GeneratedImage
 			{
                 throw new ArgumentNullException("context");
             }
-			else if (EnableSecurity && context.Request.Url.Host != "localhost")
+			bool process = true;
+			if (EnableSecurity && context.Request.Url.Host != "localhost")
 			{
-				if (context.Request.UrlReferrer == null)
+				bool allowed = false;
+				string allowedDomains = "";
+				foreach (string allowedDomain in AllowedDomains)
 				{
-					throw new SecurityException("not allowed to use standalone (only localhost)");
+					allowedDomains += allowedDomain + ",";
+					if (context.Request.Url.Host.ToLower().Contains(allowedDomain.ToLower()))
+					{
+						allowed = true;
+					}
 				}
-				if (context.Request.Url.Host != context.Request.UrlReferrer.Host)
+				if (!allowed)
 				{
-					throw new SecurityException("not allowed to use from other domain (only localhost)");
+					
+					if (context.Request.UrlReferrer == null)
+					{
+						if (EnableSecurityExceptions)
+							throw new SecurityException(String.Format("BBImageHandler: Not allowed to use standalone (only localhost + {0})",allowedDomains));
+						else
+							process = false;
+					}
+					else if (context.Request.Url.Host != context.Request.UrlReferrer.Host)
+					{
+						if (EnableSecurityExceptions)
+							throw new SecurityException(String.Format("BBImageHandler: Not allowed to use from {0} (only localhost + {1}): ", context.Request.UrlReferrer.Host,allowedDomains));
+						else
+							process = false;
+					}
 				}
 			}
-        	HttpContextBase contextWrapper = new HttpContextWrapper(context);
-            ProcessRequest(contextWrapper);
+	        if (process)
+	        {
+		        HttpContextBase contextWrapper = new HttpContextWrapper(context);
+		        ProcessRequest(contextWrapper);
+	        }
         }
 
         internal void ProcessRequest(HttpContextBase context) 

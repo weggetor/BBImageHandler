@@ -55,7 +55,11 @@ namespace Bitboxx.Web.GeneratedImage
 
         public bool EnableServerCache { get; set; }
 
-        public List<ImageTransform> ImageTransforms {
+	    public string[] AllowedDomains { get; set; }
+
+	    public bool EnableSecurityExceptions { get; set; }
+
+	    public List<ImageTransform> ImageTransforms {
             get;
             private set;
         }
