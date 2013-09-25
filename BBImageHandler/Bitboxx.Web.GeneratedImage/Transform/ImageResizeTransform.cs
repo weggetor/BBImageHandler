@@ -14,8 +14,9 @@ using System.Drawing.Drawing2D;
 
 namespace Bitboxx.Web.GeneratedImage.Transform
 {
-	public class ImageResizeTransform : ImageTransform {
-		private int _width, _height, _border;
+	public class ImageResizeTransform : ImageTransform
+	{
+	    private int _width = 0, _height = 0, _border = 0, _maxWidth = 0, _maxHeight = 0;
 		private Color _BackColor = Color.White;
 
 		/// <summary>
@@ -26,7 +27,7 @@ namespace Bitboxx.Web.GeneratedImage.Transform
 		public ImageResizeMode Mode { get; set; }
         
 		/// <summary>
-		/// Sets the maximum width of the resulting image
+		/// Sets the width of the resulting image
 		/// </summary>
 		[DefaultValue(0)]
 		[Category("Behavior")]
@@ -40,8 +41,26 @@ namespace Bitboxx.Web.GeneratedImage.Transform
 			}
 		}
 
+        /// <summary>
+        /// Sets the Max width of the resulting image
+        /// </summary>
+        [DefaultValue(0)]
+        [Category("Behavior")]
+        public int MaxWidth
+        {
+            get
+            {
+                return _maxWidth;
+            }
+            set
+            {
+                CheckValue(value);
+                _maxWidth = value;
+            }
+        }
+
 		/// <summary>
-		/// Sets the maximum height of the resulting image
+		/// Sets the height of the resulting image
 		/// </summary>
 		[DefaultValue(0)]
 		[Category("Behavior")]
@@ -54,6 +73,24 @@ namespace Bitboxx.Web.GeneratedImage.Transform
 				_height = value;
 			}
 		}
+
+        /// <summary>
+        /// Sets the height of the resulting image
+        /// </summary>
+        [DefaultValue(0)]
+        [Category("Behavior")]
+        public int MaxHeight
+        {
+            get
+            {
+                return _maxHeight;
+            }
+            set
+            {
+                CheckValue(value);
+                _maxHeight = value;
+            }
+        }
 
 		/// <summary>
 		/// Sets the border width of the resulting image
@@ -97,8 +134,25 @@ namespace Bitboxx.Web.GeneratedImage.Transform
 			}
 		}
 
-		public override Image ProcessImage(Image img) {
-			int scaledHeight = (int)(img.Height * ((float)this.Width / (float)img.Width));
+		public override Image ProcessImage(Image img)
+		{
+            if (this.MaxWidth > 0)
+            {
+                if (img.Width > this.MaxWidth)
+                    this.Width = this.MaxWidth;
+                else
+                    this.Width = img.Width;
+            }
+
+            if (this.MaxHeight > 0)
+            {
+                if (img.Height > this.MaxHeight)
+                    this.Height = this.MaxHeight;
+                else
+                    this.Height = img.Height;
+            }
+
+            int scaledHeight = (int)(img.Height * ((float)this.Width / (float)img.Width));
 			int scaledWidth = (int)(img.Width * ((float)this.Height / (float)img.Height));
 
 			Image procImage;
@@ -119,24 +173,24 @@ namespace Bitboxx.Web.GeneratedImage.Transform
 			return procImage;
 		}
 
-		private Image FitImage(Image img, int scaled_height, int scaled_width) {
+		private Image FitImage(Image img, int scaledHeight, int scaledWidth) {
 			int resizeWidth = 0;
 			int resizeHeight = 0;
 			if (this.Height == 0) {
 				resizeWidth = this.Width;
-				resizeHeight = scaled_height;
+				resizeHeight = scaledHeight;
 			}
 			else if (this.Width == 0) {
-				resizeWidth = scaled_width;
+				resizeWidth = scaledWidth;
 				resizeHeight = this.Height;
 			}
 			else {
 				if (((float)this.Width / (float)img.Width < this.Height / (float)img.Height)) {
 					resizeWidth = this.Width;
-					resizeHeight = scaled_height;
+					resizeHeight = scaledHeight;
 				}
 				else {
-					resizeWidth = scaled_width;
+					resizeWidth = scaledWidth;
 					resizeHeight = this.Height;
 				}
 			}
@@ -156,7 +210,7 @@ namespace Bitboxx.Web.GeneratedImage.Transform
 			return newimage;
 		}
 
-		private Image FitSquareImage(Image img, int scaled_height, int scaled_width)
+		private Image FitSquareImage(Image img, int scaledHeight, int scaledWidth)
 		{
 			int resizeWidth = 0;
 			int resizeHeight = 0;

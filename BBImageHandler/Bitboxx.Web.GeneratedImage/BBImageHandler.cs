@@ -98,7 +98,7 @@ namespace Bitboxx.Web.GeneratedImage
 				// Lets determine the 3 types of Image Source
 				if (!String.IsNullOrEmpty(parameters["File"]))
 				{
-					imgFile = parameters["File"].ToString();
+					imgFile = parameters["File"].Trim();
 
 					if (File.Exists(imgFile) != true)
 					{
@@ -227,7 +227,13 @@ namespace Bitboxx.Web.GeneratedImage
 						}
 					}
 				}
+			    int userId = -1;
+			    if (!string.IsNullOrEmpty(parameters["userid"]))
+			        userId = Convert.ToInt32(parameters["userid"]);
 
+			    int portalId = -1;
+                if (!string.IsNullOrEmpty(parameters["portalid"]))
+                    portalId = Convert.ToInt32(parameters["portalid"]);
 
 				ImageDbTransform dbTrans = new ImageDbTransform();
 
@@ -236,7 +242,8 @@ namespace Bitboxx.Web.GeneratedImage
 				dbTrans.SmoothingMode = SmoothingMode.HighQuality;
 				dbTrans.CompositingQuality = CompositingQuality.HighQuality;
 
-				if (connectionstring == string.Empty || table == string.Empty || imageField == string.Empty || idField == string.Empty)
+				if (userId < 0 && (connectionstring == string.Empty || (table == string.Empty || imageField == string.Empty || idField == string.Empty )) || 
+                    (userId >= 0  && connectionstring == string.Empty))
 				{
 					connectionstring = parameters["Db"];
 					table = parameters["Table"];
@@ -246,14 +253,16 @@ namespace Bitboxx.Web.GeneratedImage
 				
 				ConnectionStringSettings conn = ConfigurationManager.ConnectionStrings[connectionstring];
 
-				if (conn == null || string.IsNullOrEmpty(table) || string.IsNullOrEmpty(idField) ||
-				    string.IsNullOrEmpty(parameters["IdValue"]) || string.IsNullOrEmpty(imageField))
+				if (conn == null || 
+                    ((string.IsNullOrEmpty(table) || string.IsNullOrEmpty(idField) || string.IsNullOrEmpty(parameters["IdValue"]) || string.IsNullOrEmpty(imageField)) && string.IsNullOrEmpty(parameters["userid"]))) 
 					return EmptyImage;
 				dbTrans.ConnectionString = conn.ConnectionString;
 				dbTrans.Table = table;
 				dbTrans.IdFieldName = idField;
 				dbTrans.IdFieldValue = Convert.ToInt32(parameters["IdValue"]);
 				dbTrans.ImageFieldName = imageField;
+                dbTrans.UserId = userId;
+			    dbTrans.PortalId = portalId;
 				ImageTransforms.Add(dbTrans);
 			}
 
@@ -315,7 +324,9 @@ namespace Bitboxx.Web.GeneratedImage
 			}
 
 			// Resize-Transformation (only if not placeholder)
-			if (string.IsNullOrEmpty(parameters["placeholder"]) && (!string.IsNullOrEmpty(parameters["Width"]) || !string.IsNullOrEmpty(parameters["Height"])))
+			if (string.IsNullOrEmpty(parameters["placeholder"]) &&
+                (!string.IsNullOrEmpty(parameters["Width"]) || !string.IsNullOrEmpty(parameters["Height"]) || 
+                 (!string.IsNullOrEmpty(parameters["MaxWidth"]) || !string.IsNullOrEmpty(parameters["MaxHeight"]))))
 			{
 				ImageResizeTransform resizeTrans = new ImageResizeTransform();
 				resizeTrans.Mode = ImageResizeMode.Fit;
@@ -335,12 +346,19 @@ namespace Bitboxx.Web.GeneratedImage
 				if (!string.IsNullOrEmpty(parameters["Width"]))
 				{
 					resizeTrans.Width = Convert.ToInt32(parameters["Width"]);
-
 				}
 				if (!string.IsNullOrEmpty(parameters["Height"]))
 				{
 					resizeTrans.Height = Convert.ToInt32(parameters["Height"]);
 				}
+                if (!string.IsNullOrEmpty(parameters["MaxWidth"]))
+                {
+                    resizeTrans.MaxWidth = Convert.ToInt32(parameters["MaxWidth"]);
+                }
+                if (!string.IsNullOrEmpty(parameters["MaxHeight"]))
+                {
+                    resizeTrans.MaxHeight = Convert.ToInt32(parameters["MaxHeight"]);
+                }
 				if (!string.IsNullOrEmpty(parameters["Border"]))
 				{
 					resizeTrans.Border = Convert.ToInt32(parameters["Border"]);
