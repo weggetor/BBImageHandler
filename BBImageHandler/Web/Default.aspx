@@ -64,6 +64,8 @@
 				<strong>width</strong>: width in pixel of resulting image</li>
 			<li>
 				<strong>height</strong>: height in pixel of resulting image</li>
+            <li>
+				<strong>maxwidth</strong> and <strong>maxheight</strong>: instead of width and / or height you can use maxwidth and/or maxheight to leave the picture as it is until the width or height reaches the max value.</li>
 			<li>
 				<strong>resizemode</strong>:
 				<ul>
@@ -222,6 +224,24 @@
 			<li><strong>db</strong>: key of appsetting entry in web.config (e.g. "BBDatabase")</li>
 			<li><strong>idvalue</strong>: value of id</li>
 		</ul>
+        <hr />
+		<h2>DNN Profile picture:</h2>
+		<p>Profile picture of a DNN User: <br />
+		<span style="color:blue;">&lt;</span><span 
+				style="color:maroon;">img</span>&nbsp;<span style="color:red;">src</span><span 
+				style="color:blue;">=&quot;bbimagehandler.ashx?<span style="color: black; background: white;"><span style="color:blue;">db=BBDatabase&amp;userid=7&amp;portalid=0&amp;height=150</span></span>&quot;</span>&nbsp;<span 
+				style="color:blue;">/&gt;</span><br />
+		</p>
+		<img src="profilepic.jpg" />
+		<h3>Parameters:</h3>
+		<ul>
+			<li><strong>db</strong>: key of appsetting entry in web.config (e.g. "BBDatabase", see &quot;Images stored in database&quot;)</li>
+			<li><strong>userid</strong>: userid of the user whose profile picture should be shown</li>
+            <li><strong>portalid</strong>: the portalid in which the user resides</li>
+		</ul>
+		<p style="border:3px #32cd32 solid; padding:10px;">
+			<strong>Don&#39;t forget that you can combine the most parameters (not only for the profile pic option). So it is possible to pimp your profile pic as inverted with border and watermark </strong> </p>
+        <img src="bbimagehandler.ashx?file=profilepic.jpg&invert=1&width=150&ResizeMode=FitSquare&BackColor=%23AA000A&border=10&watermarktext=bitboxx+rulez&watermarkfontcolor=white&watermarkposition=center"/>
 		<hr />
 		<h2>Webpage Thumbnail:</h2>
 		<p>Url Thumbnail of Webpage: <br />
