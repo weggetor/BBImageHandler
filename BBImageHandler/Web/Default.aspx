@@ -306,8 +306,24 @@
 			<li><strong>BackColor</strong>: Backcolor of Image (Default:light grey, optional)</li>
 			<li><strong>Text</strong>: Text to show on image. If not used, image dimensions will be shown</li>
 		</ul>
-    	<p>
-			&nbsp;</p>
+        <hr />
+		<h2>Barcode</h2>
+		<p>Generates a barcode image:<br />
+		<span style="color:blue;">&lt;</span><span style="color:maroon;">img</span>&nbsp;<span 
+			style="color:red;">src</span><span style="color:blue;">=&quot;bbimagehandler.ashx?barcode=1&amp;width=150&amp;height=150&amp;type=qrcode&amp;content=this%20is%20the%20barcode%20content&quot;</span>&nbsp;<span 
+			style="color:blue;">/&gt;</span><br />
+		</p>
+		<img src="bbimagehandler.ashx?barcode=1&width=150&Height=150&type=qrcode&content=this%20is%20the%20barcode%20content" />
+		<h3>Parameters:</h3>
+		<ul>
+			<li><strong>barcode</strong>: Any value (e.g. barcode=1)</li>
+            <li><strong>type</strong>: upca, ean8, ean13, code39, code128, itf, codabar, plessey, msi, qrcode, pdf417, aztec, datamatrix</li>
+			<li><strong>Width</strong>: Width of resulting barcode</li>
+			<li><strong>Height</strong>: Height of resulting barcode</li>
+            <li><strong>Border</strong>: Width of border (Specifies margin, in pixels, to use when generating the barcode. The meaning can vary by format; for example it controls margin before and after the barcode horizontally for most 1D formats.)</li>
+			<li><strong>Content</strong>: The content of the barcode (numeric or alphanumeric,depends on barcode type)</li>
+		</ul>
+    	<p>(Barcode generation is made by open source library <a href="https://zxingnet.codeplex.com">ZXing.NET</a>)</p>
     </div>
     </form>
 </body>

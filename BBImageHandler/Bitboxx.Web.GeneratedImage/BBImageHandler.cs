@@ -131,7 +131,8 @@ namespace Bitboxx.Web.GeneratedImage
 				else if (String.IsNullOrEmpty(parameters["Url"]) &&
 				         String.IsNullOrEmpty(parameters["db"]) &&
 				         String.IsNullOrEmpty(parameters["percentage"]) &&
-				         String.IsNullOrEmpty(parameters["placeholder"]))
+				         String.IsNullOrEmpty(parameters["placeholder"]) &&
+                         String.IsNullOrEmpty(parameters["barcode"]))
 				{
 					return EmptyImage;
 				}
@@ -323,8 +324,44 @@ namespace Bitboxx.Web.GeneratedImage
 
 			}
 
-			// Resize-Transformation (only if not placeholder)
-			if (string.IsNullOrEmpty(parameters["placeholder"]) &&
+            // Barcode 
+		    if (!string.IsNullOrEmpty((parameters["barcode"])))
+		    {
+		        ImageBarcodeTransform barcodeTrans = new ImageBarcodeTransform();
+
+		        barcodeTrans.InterpolationMode = InterpolationMode.HighQualityBicubic;
+		        barcodeTrans.PixelOffsetMode = PixelOffsetMode.HighQuality;
+		        barcodeTrans.SmoothingMode = SmoothingMode.HighQuality;
+		        barcodeTrans.CompositingQuality = CompositingQuality.HighQuality;
+		        barcodeTrans.Border = 0;
+		        barcodeTrans.Width = 100;
+                barcodeTrans.Height = 100;
+
+		        if (!String.IsNullOrEmpty(parameters["type"]) && "upca,ean8,ean13,code39,code128,itf,codabar,plessey,msi,qrcode,pdf417,aztec,datamatrix,".LastIndexOf(parameters["type"].ToLower() + ",") > -1)
+		        {
+		            barcodeTrans.Type = parameters["type"].ToLower();
+		        }
+                if (!String.IsNullOrEmpty(parameters["content"]))
+                {
+                    barcodeTrans.Content = parameters["content"];
+                }
+                if (!string.IsNullOrEmpty(parameters["Width"]))
+                {
+                    barcodeTrans.Width = Convert.ToInt32(parameters["Width"]);
+                }
+                if (!string.IsNullOrEmpty(parameters["Height"]))
+                {
+                    barcodeTrans.Height = Convert.ToInt32(parameters["Height"]);
+                }
+                if (!string.IsNullOrEmpty(parameters["Border"]))
+                {
+                    barcodeTrans.Border = Convert.ToInt32(parameters["Border"]);
+                }
+                ImageTransforms.Add(barcodeTrans);
+		    }
+
+		    // Resize-Transformation (only if not placeholder or barcode)
+            if (string.IsNullOrEmpty(parameters["placeholder"]) && string.IsNullOrEmpty(parameters["barcode"]) &&
                 (!string.IsNullOrEmpty(parameters["Width"]) || !string.IsNullOrEmpty(parameters["Height"]) || 
                  (!string.IsNullOrEmpty(parameters["MaxWidth"]) || !string.IsNullOrEmpty(parameters["MaxHeight"]))))
 			{
