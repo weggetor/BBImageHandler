@@ -70,6 +70,13 @@ namespace Bitboxx.Web.GeneratedImage.Transform
 		[Category("Behavior")]
 		public string ImageFieldName { get; set; }
 
+        /// <summary>
+        /// Sets the empty Image
+        /// </summary>
+        [DefaultValue("")]
+        [Category("Behavior")]
+        public Image EmptyImage { get; set; }
+
 		public override string UniqueString
 		{
 			get
@@ -100,6 +107,7 @@ namespace Bitboxx.Web.GeneratedImage.Transform
                          " WHERE ProfilePropertydefinition.Propertyname = 'Photo'" +
                          " AND ProfilePropertydefinition.PortalId = " + this.PortalId.ToString() +
                          " AND Userprofile.UserId = " + this.UserId.ToString();
+                
                 object result = SqlHelper.ExecuteScalar(this.ConnectionString, CommandType.Text, sqlCmd);
                 if (result != null)
                 {
@@ -109,7 +117,7 @@ namespace Bitboxx.Web.GeneratedImage.Transform
                     {
                         return new Bitmap(imgFile);
                     }
-                }
+                 }
             }
             else
             {
@@ -123,10 +131,9 @@ namespace Bitboxx.Web.GeneratedImage.Transform
 		            MemoryStream ms = new MemoryStream((byte[]) result);
 		            return Image.FromStream(ms);
 		        }
+		        
 		    }
-            Bitmap emptyBmp = new Bitmap(1, 1, PixelFormat.Format1bppIndexed);
-            emptyBmp.MakeTransparent();
-            return emptyBmp;
+            return EmptyImage;
 		}
 	}
 }

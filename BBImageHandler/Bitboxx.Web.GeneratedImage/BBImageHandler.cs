@@ -15,14 +15,51 @@ namespace Bitboxx.Web.GeneratedImage
 	public class BBImageHandler : ImageHandler
 	{
 
-		private ImageInfo EmptyImage
+	    private string defaultImageFile = "";
+
+	    private Image EmptyImage
 		{
 			get
 			{
-				Bitmap emptyBmp = new Bitmap(1, 1, PixelFormat.Format1bppIndexed);
-				emptyBmp.MakeTransparent();
-				ContentType = ImageFormat.Png;
-				return new ImageInfo(emptyBmp);
+                Bitmap emptyBmp = new Bitmap(1, 1, PixelFormat.Format1bppIndexed);
+                emptyBmp.MakeTransparent();
+                ContentType = ImageFormat.Png;
+
+			    if (!String.IsNullOrEmpty(defaultImageFile))
+			    {
+			        FileInfo fi = new FileInfo(defaultImageFile);
+			        string format = fi.Extension;
+			        switch (format)
+			        {
+			            case "jpg":
+			            case "jpeg":
+			                ContentType = ImageFormat.Jpeg;
+			                break;
+			            case "bmp":
+			                ContentType = ImageFormat.Bmp;
+			                break;
+			            case "gif":
+			                ContentType = ImageFormat.Gif;
+			                break;
+			            case "png":
+			                ContentType = ImageFormat.Png;
+			                break;
+			        }
+
+			        if (File.Exists(defaultImageFile))
+			        {
+			            emptyBmp = new Bitmap(Image.FromFile(defaultImageFile, true));
+			        }
+			        else
+			        {
+			            defaultImageFile = Path.GetFullPath(HttpContext.Current.Request.PhysicalApplicationPath + defaultImageFile);
+			            if (File.Exists(defaultImageFile))
+			            {
+			                emptyBmp = new Bitmap(Image.FromFile(defaultImageFile, true));
+			            }
+			        }
+			    }
+				return emptyBmp;
 			}
 		}
 
@@ -38,7 +75,7 @@ namespace Bitboxx.Web.GeneratedImage
 
 			try
 			{
-				string settings = ConfigurationManager.AppSettings["BBImageHandler"];
+                string settings = ConfigurationManager.AppSettings["BBImageHandler"];
 				if (!String.IsNullOrEmpty(settings))
 				{
 					string[] values = settings.Split(';');
@@ -95,16 +132,22 @@ namespace Bitboxx.Web.GeneratedImage
 					EnableServerCache = false;
 				}
 
+                // Do we have a default image file ?
+                if (!String.IsNullOrEmpty(parameters["DefaultImage"]))
+                {
+                    defaultImageFile = parameters["DefaultImage"];
+                }
+
 				// Lets determine the 3 types of Image Source
 				if (!String.IsNullOrEmpty(parameters["File"]))
 				{
 					imgFile = parameters["File"].Trim();
 
-					if (File.Exists(imgFile) != true)
+					if (!File.Exists(imgFile))
 					{
-						imgFile = Path.Combine(HttpContext.Current.Request.PhysicalApplicationPath, imgFile);
-						if (File.Exists(imgFile) != true)
-							return EmptyImage;
+						imgFile = Path.GetFullPath(HttpContext.Current.Request.PhysicalApplicationPath + imgFile);
+						if (!File.Exists(imgFile))
+							return new ImageInfo(EmptyImage);
 					}
 				}
 				else if (!String.IsNullOrEmpty(parameters["Path"]))
@@ -112,11 +155,11 @@ namespace Bitboxx.Web.GeneratedImage
 					imgIndex = Convert.ToInt32(parameters["Index"]);
 					imgPath = parameters["Path"];
 
-					if (Directory.Exists(imgPath) != true)
+					if (!Directory.Exists(imgPath))
 					{
-						imgPath = Path.Combine(HttpContext.Current.Request.PhysicalApplicationPath, imgPath);
-						if (Directory.Exists(imgPath) != true)
-							return EmptyImage;
+						imgPath = Path.GetFullPath(HttpContext.Current.Request.PhysicalApplicationPath + imgPath);
+						if (!Directory.Exists(imgPath))
+                            return new ImageInfo(EmptyImage);
 					}
 
 					string[] Files = Directory.GetFiles(imgPath, "*.*");
@@ -125,16 +168,18 @@ namespace Bitboxx.Web.GeneratedImage
 						Array.Sort(Files);
 						imgFile = Files[imgIndex];
 						if (File.Exists(imgFile) != true)
-							return EmptyImage;
+                            return new ImageInfo(EmptyImage);
 					}
 				}
 				else if (String.IsNullOrEmpty(parameters["Url"]) &&
+                         String.IsNullOrEmpty(parameters["ImageUrl"]) &&
 				         String.IsNullOrEmpty(parameters["db"]) &&
+                         String.IsNullOrEmpty(parameters["dnn"]) &&
 				         String.IsNullOrEmpty(parameters["percentage"]) &&
 				         String.IsNullOrEmpty(parameters["placeholder"]) &&
                          String.IsNullOrEmpty(parameters["barcode"]))
 				{
-					return EmptyImage;
+                    return new ImageInfo(EmptyImage);
 				}
 
 				// We need to determine the output format		
@@ -157,7 +202,7 @@ namespace Bitboxx.Web.GeneratedImage
 							ContentType = ImageFormat.Png;
 							break;
 						default:
-							return EmptyImage;
+                            return new ImageInfo(EmptyImage);
 					}
 				}
 				else if (imgFile != string.Empty)
@@ -175,7 +220,7 @@ namespace Bitboxx.Web.GeneratedImage
 							ContentType = ImageFormat.Png;
 							break;
 						default:
-							return EmptyImage;
+                            return new ImageInfo(EmptyImage);
 					}
 				}
 
@@ -192,7 +237,7 @@ namespace Bitboxx.Web.GeneratedImage
 			}
 			catch (Exception)
 			{
-				return EmptyImage;
+                return new ImageInfo(EmptyImage);
 			}
 
 			// Db Transform
@@ -201,7 +246,7 @@ namespace Bitboxx.Web.GeneratedImage
 				//First let us check if the Db value is a key or a connectionstring name
 
 				string settings = ConfigurationManager.AppSettings[parameters["Db"]];
-				string connectionstring = "", table = "", imageField = "", idField = "";
+				string connectionName = "", table = "", imageField = "", idField = "";
 				if (!String.IsNullOrEmpty(settings))
 				{
 					string[] values = settings.Split(';');
@@ -212,7 +257,7 @@ namespace Bitboxx.Web.GeneratedImage
 						switch (name)
 						{
 							case "connectionstring":
-								connectionstring = setting[1];
+								connectionName = setting[1];
 								break;
 							case "table":
 								table = setting[1];
@@ -228,14 +273,7 @@ namespace Bitboxx.Web.GeneratedImage
 						}
 					}
 				}
-			    int userId = -1;
-			    if (!string.IsNullOrEmpty(parameters["userid"]))
-			        userId = Convert.ToInt32(parameters["userid"]);
-
-			    int portalId = -1;
-                if (!string.IsNullOrEmpty(parameters["portalid"]))
-                    portalId = Convert.ToInt32(parameters["portalid"]);
-
+			    
 				ImageDbTransform dbTrans = new ImageDbTransform();
 
 				dbTrans.InterpolationMode = InterpolationMode.HighQualityBicubic;
@@ -243,29 +281,64 @@ namespace Bitboxx.Web.GeneratedImage
 				dbTrans.SmoothingMode = SmoothingMode.HighQuality;
 				dbTrans.CompositingQuality = CompositingQuality.HighQuality;
 
-				if (userId < 0 && (connectionstring == string.Empty || (table == string.Empty || imageField == string.Empty || idField == string.Empty )) || 
-                    (userId >= 0  && connectionstring == string.Empty))
+				if (connectionName == string.Empty || table == string.Empty || imageField == string.Empty || idField == string.Empty )
 				{
-					connectionstring = parameters["Db"];
+					connectionName = parameters["Db"];
 					table = parameters["Table"];
 					imageField = parameters["ImageField"];
 					idField = parameters["IdField"];
 				}
-				
-				ConnectionStringSettings conn = ConfigurationManager.ConnectionStrings[connectionstring];
 
-				if (conn == null || 
-                    ((string.IsNullOrEmpty(table) || string.IsNullOrEmpty(idField) || string.IsNullOrEmpty(parameters["IdValue"]) || string.IsNullOrEmpty(imageField)) && string.IsNullOrEmpty(parameters["userid"]))) 
-					return EmptyImage;
-				dbTrans.ConnectionString = conn.ConnectionString;
+				ConnectionStringSettings conn = ConfigurationManager.ConnectionStrings[connectionName];
+
+				if (conn == null || string.IsNullOrEmpty(table) || string.IsNullOrEmpty(idField) || 
+                    string.IsNullOrEmpty(parameters["IdValue"]) || string.IsNullOrEmpty(imageField))
+				{
+				    return new ImageInfo(EmptyImage);
+				}
+				
+                dbTrans.ConnectionString = conn.ConnectionString;
 				dbTrans.Table = table;
 				dbTrans.IdFieldName = idField;
 				dbTrans.IdFieldValue = Convert.ToInt32(parameters["IdValue"]);
 				dbTrans.ImageFieldName = imageField;
-                dbTrans.UserId = userId;
-			    dbTrans.PortalId = portalId;
+			    dbTrans.EmptyImage = EmptyImage;
 				ImageTransforms.Add(dbTrans);
 			}
+
+            // DNN Profile Pic
+            if (!string.IsNullOrEmpty(parameters["Dnn"]))
+            {
+                //First let us check if the Db value is a key or a connectionstring name
+                
+                int userId = -1;
+                if (!string.IsNullOrEmpty(parameters["userid"]))
+                    userId = Convert.ToInt32(parameters["userid"]);
+
+                int portalId = -1;
+                if (!string.IsNullOrEmpty(parameters["portalid"]))
+                    portalId = Convert.ToInt32(parameters["portalid"]);
+
+                ImageDbTransform dbTrans = new ImageDbTransform();
+
+                dbTrans.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                dbTrans.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                dbTrans.SmoothingMode = SmoothingMode.HighQuality;
+                dbTrans.CompositingQuality = CompositingQuality.HighQuality;
+
+                string connectionName = "SiteSqlServer"; //DNN
+
+                ConnectionStringSettings conn = ConfigurationManager.ConnectionStrings[connectionName];
+
+                if (conn == null || string.IsNullOrEmpty((parameters["portalid"])) && string.IsNullOrEmpty(parameters["userid"]))
+                    return new ImageInfo(EmptyImage);
+
+                dbTrans.ConnectionString = conn.ConnectionString;
+                dbTrans.UserId = userId;
+                dbTrans.PortalId = portalId;
+                dbTrans.EmptyImage = EmptyImage;
+                ImageTransforms.Add(dbTrans);
+            }
 
 
 			// Url Transform
@@ -285,6 +358,20 @@ namespace Bitboxx.Web.GeneratedImage
 					urlTrans.Ratio = UrlRatioMode.Full;
 				ImageTransforms.Add(urlTrans);
 			}
+
+            // ImageUrl Transform
+            if (!string.IsNullOrEmpty(parameters["ImageUrl"]))
+            {
+                ImageUrlImageTransform imageUrlTrans = new ImageUrlImageTransform();
+
+                imageUrlTrans.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                imageUrlTrans.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                imageUrlTrans.SmoothingMode = SmoothingMode.HighQuality;
+                imageUrlTrans.CompositingQuality = CompositingQuality.HighQuality;
+
+                imageUrlTrans.ImageUrl = parameters["ImageUrl"];
+                ImageTransforms.Add(imageUrlTrans);
+            }
 
 			// Counter Transform
 			if (!string.IsNullOrEmpty(parameters["Counter"]))

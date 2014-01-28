@@ -64,6 +64,7 @@
     <Compile Include="BBImageHandler.cs" />
     <Compile Include="ImageQuantization\GrayscaleQuantizer.cs" />
     <Compile Include="Transform\ImageBarcodeTransform.cs" />
+    <Compile Include="Transform\ImageUrlImageTransform.cs" />
     <Compile Include="Transform\ImagePlaceHolderTransform.cs" />
     <Compile Include="Transform\ImageRotateFlipTransform.cs" />
     <Compile Include="Transform\ImageInvertTransform.cs" />
