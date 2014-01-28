@@ -23,7 +23,7 @@
 			<li><strong>EnableSecurity</strong>: If set to true, only using bbimagehandler in a web page is allowed. Direct usage (eg: entering address in browser, no referer) is prohibited.  Also using it in a different domain is not possible (web page from http://www.domain-a.com uses http://www.domain-b.com/bbimagehandler.ashx...)</li>
 			<li><strong>EnableSecurityExceptions</strong>: Set to true if security exceptions should be thrown</li>
 			<li><strong>ImageCompression</strong>: quality of resulting image (0..100)</li> 
-			<li><strong>AllowedDomains</strong>: Comma separated list of Domains that should be permitted to use the imagehandler. Use "domain.com" to permit including all subdomains an "www.domain.com" to allow only referers from this special subdomain</li>
+			<li><strong>AllowedDomains</strong>: Comma separated list of Domains that should be permitted to use the imagehandler. Use "domain.com" to permit including all subdomains and "www.domain.com" to allow only referers from this special subdomain</li>
 		</ul>
 		<hr/>
 		<h1>Usage</h1>
@@ -60,7 +60,11 @@
 		<img src="bbimagehandler.ashx?File=Winter.jpg&width=150&ResizeMode=FitSquare&BackColor=%23F58719&border=10" />
 		<h3>Parameters:</h3>
 		<ul>
-			<li>
+			<li><strong>file</strong>: physical path including image name (relative path starts at <a href="http://msdn.microsoft.com/de-de/library/system.web.httprequest.physicalapplicationpath%28v=vs.110%29.aspx">Request.PhysicalApplicationPath</a>)</li>
+            <li>or <strong>path</strong>: path (absolute or relative path to image directory) and <strong>index</strong>: index of file in directory (alphabetical order)</li>
+        </ul>
+        <ul>
+            <li>
 				<strong>width</strong>: width in pixel of resulting image</li>
 			<li>
 				<strong>height</strong>: height in pixel of resulting image</li>
@@ -85,6 +89,7 @@
 			<li><strong>border</strong>: border width in pixels around the image (added to width 
 				/ height) when <em>resizemode</em> is f<em>itsquare</em> or f<em>it</em>.</li>
 			<li><strong>nocache</strong>: If present, the globally defined cache settings in web.config are disabled and no caching takes place for this image. Add any value to enable nocache (e.g. nocache=1)</li>
+            <li><strong>defaultimage</strong>: if present and the original image is not availiable or empty, this image would be displayed instead. same format as "file"</li>
 		</ul>
 		<hr/>
 		<h2>Gamma correction</h2>
@@ -229,13 +234,13 @@
 		<p>Profile picture of a DNN User: <br />
 		<span style="color:blue;">&lt;</span><span 
 				style="color:maroon;">img</span>&nbsp;<span style="color:red;">src</span><span 
-				style="color:blue;">=&quot;bbimagehandler.ashx?<span style="color: black; background: white;"><span style="color:blue;">db=BBDatabase&amp;userid=7&amp;portalid=0&amp;height=150</span></span>&quot;</span>&nbsp;<span 
+				style="color:blue;">=&quot;bbimagehandler.ashx?<span style="color: black; background: white;"><span style="color:blue;">dnn=1&amp;userid=7&amp;portalid=0&amp;height=150&amp;defaultimage=images/no_avatar.gif</span></span>&quot;</span>&nbsp;<span 
 				style="color:blue;">/&gt;</span><br />
 		</p>
 		<img src="profilepic.jpg" />
 		<h3>Parameters:</h3>
 		<ul>
-			<li><strong>db</strong>: key of appsetting entry in web.config (e.g. "BBDatabase", see &quot;Images stored in database&quot;)</li>
+			<li><strong>dnn</strong>: Any value (e.g. dnn=1)</li>
 			<li><strong>userid</strong>: userid of the user whose profile picture should be shown</li>
             <li><strong>portalid</strong>: the portalid in which the user resides</li>
 		</ul>
@@ -243,6 +248,19 @@
 			<strong>Don&#39;t forget that you can combine the most parameters (not only for the profile pic option). So it is possible to pimp your profile pic as inverted with border and watermark </strong> </p>
         <img src="bbimagehandler.ashx?file=profilepic.jpg&invert=1&width=150&ResizeMode=FitSquare&BackColor=%23AA000A&border=10&watermarktext=bitboxx+rulez&watermarkfontcolor=white&watermarkposition=center"/>
 		<hr />
+		<h2>Web Image</h2>
+		<p>Image from another website <br />
+		<span style="color:blue;">&lt;</span><span 
+				style="color:maroon;">img</span>&nbsp;<span style="color:red;">src</span><span 
+				style="color:blue;">=&quot;bbimagehandler.ashx?ImageUrl=http://www.bitboxx.net/Portals/0/Images/bitboxxsmall.gif&amp;width=200</span>&nbsp;<span 
+				style="color:blue;">/&gt;</span><br />
+		</p>
+		<img src="bbimagehandler.ashx?ImageUrl=http://www.bitboxx.net/Portals/0/Images/bitboxxsmall.gif&width=200" />
+		<h3>Parameters:</h3>
+		<ul>
+			<li><strong>imageurl</strong>: Url of the image to be displayed</li>
+		</ul>
+        <hr />
 		<h2>Webpage Thumbnail:</h2>
 		<p>Url Thumbnail of Webpage: <br />
 		<span style="color:blue;">&lt;</span><span 
