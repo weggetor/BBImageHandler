@@ -6,6 +6,7 @@ using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using System.Globalization;
 using System.Security;
+using System.Threading;
 using System.Web;
 using System.IO;
 using Bitboxx.Web.GeneratedImage.Transform;
@@ -177,7 +178,8 @@ namespace Bitboxx.Web.GeneratedImage
                          String.IsNullOrEmpty(parameters["dnn"]) &&
 				         String.IsNullOrEmpty(parameters["percentage"]) &&
 				         String.IsNullOrEmpty(parameters["placeholder"]) &&
-                         String.IsNullOrEmpty(parameters["barcode"]))
+                         String.IsNullOrEmpty(parameters["barcode"]) &&
+                         String.IsNullOrEmpty(parameters["schedule"]))
 				{
                     return new ImageInfo(EmptyImage);
 				}
@@ -446,6 +448,28 @@ namespace Bitboxx.Web.GeneratedImage
                 }
                 ImageTransforms.Add(barcodeTrans);
 		    }
+
+		    if (!string.IsNullOrEmpty((parameters["schedule"])))
+		    {
+                ImageScheduleTransform scheduleTrans = new ImageScheduleTransform();
+
+                scheduleTrans.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                scheduleTrans.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                scheduleTrans.SmoothingMode = SmoothingMode.HighQuality;
+                scheduleTrans.CompositingQuality = CompositingQuality.HighQuality;
+		        scheduleTrans.Matrix = parameters["matrix"];
+		        if (!string.IsNullOrEmpty(parameters["culture"]))
+		            scheduleTrans.Culture = parameters["culture"];
+		        else
+		            scheduleTrans.Culture = Thread.CurrentThread.CurrentCulture.Name;
+		        if (!string.IsNullOrEmpty(parameters["backcolor"]))
+		            scheduleTrans.BackColor = backColor;
+                else
+                    scheduleTrans.BackColor = Color.White;
+
+		        ImageTransforms.Add(scheduleTrans);
+		    }
+
 
 		    // Resize-Transformation (only if not placeholder or barcode)
             if (string.IsNullOrEmpty(parameters["placeholder"]) && string.IsNullOrEmpty(parameters["barcode"]) &&
