@@ -98,7 +98,7 @@ namespace Bitboxx.Web.GeneratedImage.Transform
 		{
 		    string sqlCmd;
             
-            if (UserId > -1)
+            if (UserId > 0)
             {
                 sqlCmd = "SELECT RTRIM(Files.Folder) + RTRIM(LTRIM(Files.FileName)) AS profilepic"+
                          " FROM UserProfile " +
