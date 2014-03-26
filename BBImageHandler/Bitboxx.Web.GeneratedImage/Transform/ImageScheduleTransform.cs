@@ -7,18 +7,11 @@
     This is sample code and is freely distributable. 
 */
 using System.ComponentModel;
-using System.Data;
-using System.Data.SqlClient;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using System.Drawing.Text;
 using System.Globalization;
-using System.IO;
 using System.Threading;
-using Microsoft.ApplicationBlocks.Data;
-using ZXing;
-using ZXing.Common;
 
 namespace Bitboxx.Web.GeneratedImage.Transform
 {
@@ -53,11 +46,15 @@ namespace Bitboxx.Web.GeneratedImage.Transform
         {
             Bitmap bmp = new Bitmap(486, 224, PixelFormat.Format32bppPArgb);
             
-                SolidBrush emptyBrush = new SolidBrush(Color.FromArgb(204, 204, 204));
-                SolidBrush freeBrush = new SolidBrush(Color.FromArgb(1, 151, 0));
-                SolidBrush reservedBrush = new SolidBrush(Color.FromArgb(255, 204, 0));
-                SolidBrush occupiedBrush = new SolidBrush(Color.FromArgb(155, 0, 3));
-                SolidBrush captionBrush = new SolidBrush(Color.FromArgb(204, 204, 204));
+            SolidBrush emptyBrush = new SolidBrush(Color.FromArgb(204, 204, 204));
+            SolidBrush captionBrush = new SolidBrush(Color.FromArgb(204, 204, 204));
+
+            SolidBrush freeBrush = new SolidBrush(Color.FromArgb(1, 151, 0));
+            SolidBrush reservedBrush = new SolidBrush(Color.FromArgb(255, 204, 0));
+            SolidBrush occupiedBrush = new SolidBrush(Color.FromArgb(155, 0, 3));
+            SolidBrush selectedBrush = new SolidBrush(Color.FromArgb(1,79,255));
+
+            SolidBrush transBrush = new SolidBrush(Color.FromArgb(100, 255, 255, 255));
 
             using (var gr = Graphics.FromImage(bmp))
             {
@@ -131,37 +128,56 @@ namespace Bitboxx.Web.GeneratedImage.Transform
                         Point[] firstHalf = {new Point(x, y), new Point(x + 13, y), new Point(x, y + 16)};
                         Point[] lastHalf = {new Point(x + 13, y), new Point(x + 13, y + 16), new Point(x, y + 16)};
 
-
-                        switch (matrix[month, day])
+                        int today = matrix[month, day];
+                        if ( today == 0)
                         {
-                            case 0:
-                                gr.FillRectangle(emptyBrush, x, y, 13, 16);
-                                break;
-                            case 1:
-                                gr.FillPolygon(freeBrush, lastHalf);
-                                break;
-                            case 2:
-                                gr.FillPolygon(reservedBrush, lastHalf);
-                                break;
-                            case 3:
-                                gr.FillPolygon(occupiedBrush, lastHalf);
-                                break;
-
+                            gr.FillRectangle(emptyBrush, x, y, 13, 16);
                         }
-                        if (matrix[month, day] != 0)
+                        else
                         {
+                            switch (today)
+                            {
+                                case 1:
+                                case 6:
+                                    gr.FillPolygon(freeBrush, lastHalf);
+                                    break;
+                                case 2:
+                                case 7:
+                                    gr.FillPolygon(reservedBrush, lastHalf);
+                                    break;
+                                case 3:
+                                case 8:
+                                    gr.FillPolygon(occupiedBrush, lastHalf);
+                                    break;
+                                case 4:
+                                case 9:
+                                    gr.FillPolygon(selectedBrush, lastHalf);
+                                    break;
+                            }
+
                             switch (yesterday)
                             {
                                 case 1:
+                                case 6:
                                     gr.FillPolygon(freeBrush, firstHalf);
                                     break;
                                 case 2:
+                                case 7:
                                     gr.FillPolygon(reservedBrush, firstHalf);
                                     break;
                                 case 3:
+                                case 8:
                                     gr.FillPolygon(occupiedBrush, firstHalf);
                                     break;
+                                case 4:
+                                case 9:
+                                    gr.FillPolygon(selectedBrush, firstHalf);
+                                    break;
 
+                            }
+                            if (today > 4)
+                            {
+                                gr.FillRectangle(transBrush, x, y, 13, 16);
                             }
                             yesterday = matrix[month, day];
                         }

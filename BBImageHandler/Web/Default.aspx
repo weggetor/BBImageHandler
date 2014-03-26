@@ -346,16 +346,16 @@
 		<h2>Booking Schedule</h2>
 		<p>Generates a 1 year booking schedule image:<br />
 		<span style="color:blue;">&lt;</span><span style="color:maroon;">img</span>&nbsp;<span 
-			style="color:red;">src</span><span style="color:blue;">=&quot;bbimagehandler.ashx?schedule=year&amp;culture=de-DE&amp;matrix=11111111111111111111111111111111111111111111111111111111111000111111133333...&quot;</span>&nbsp;<span 
+			style="color:red;">src</span><span style="color:blue;">=&quot;bbimagehandler.ashx?schedule=year&amp;culture=de-DE&amp;matrix=11166111116611111661111166111116611111661111166111116611111000661111188333338833311661...&quot;</span>&nbsp;<span 
 			style="color:blue;">/&gt;</span><br />
 		</p>
-		<img src="bbimagehandler.ashx?schedule=1&culture=de-de&matrix=111111111111111111111111111111111111111111111111111111111110001111111333333333331111111111111111111111111111111111111111111011111111111111133333333111111111111113333333333311111111111110111333333311133333333331122211111113333311111133333333111111111111111111111111111111111111110111111111111111111111111111111111333333333331111111111111111101111111111111111111333333111111&Format=png" />
+		<img src="bbimagehandler.ashx?schedule=1&culture=de-de&matrix=111661111166111116611111661111166111116611111661111166111110006611111883333388333116611111661111166111116611111661111166111011661111166111127722222771111166111116611111661111166111116610111166111116611111661111166111116611111661111166111116611111661111166111116611111661111166110111661111166111116611111661111166111116611111661111166111116601111166111116611111661111166111&Format=png" />
 		<h3>Parameters:</h3>
 		<ul>
 			<li><strong>schedule</strong>: Any value (e.g. schedule=year)</li>
             <li><strong>backcolor</strong>: color of background (optional, default = white)</li>
             <li><strong>culture</strong>: Culture abbrev (e.g. "en-us"). Needed for displaying month names (optional, default is CurrentCulture)</li>
-			<li><strong>Matrix</strong>: String of length 12 * 31 = 372 (0 = no valid date (eg. Feb. 30), 1 = free, 2 = reserved, 3 = occupied) </li>
+			<li><strong>Matrix</strong>: String of length 12 * 31 = 372 (0 = no valid date (eg. Feb. 30), 1 = free, 2 = reserved, 3 = occupied, 4 = selected. Add +5 if weekend) </li>
 		</ul>
     </div>
     </form>
