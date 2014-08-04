@@ -13,13 +13,15 @@
 		<p>Add the following to your web.config’s appSettings section:<br/>
 		<span style="color: black; background: white;"><span style="color:blue;">&lt;</span><span style="color:maroon;">add</span>&nbsp;<span 
 			style="color:red;">key</span><span style="color:blue;">=&quot;BBImageHandler&quot;</span>&nbsp;<span 
-			style="color:red;">value</span><span style="color:blue;">=&quot;EnableClientCache=true;EnableServerCache=true;EnableSecurity=true;EnableSecurityExceptions=trueImageCompression=90;AllowedDomains=localhost,www.mydomain.com&quot;</span>&nbsp;<span 
+			style="color:red;">value</span><span style="color:blue;">=&quot;EnableClientCache=true;EnableServerCache=true;ServerCacheExpiration=3600;EnableSecurity=true;EnableSecurityExceptions=trueImageCompression=90;AllowedDomains=localhost,www.mydomain.com&quot;</span>&nbsp;<span 
 			style="color:blue;">/&gt;</span>
 		</span></p>
 		<h3>Parameters:</h3>
 		<ul>
 			<li><strong>EnableClientCache</strong>: Set to true if client caching should be enabled</li>
+            <li><strong>ClientCacheExpiration</strong>: Set to seconds (Default: 600)</li>
 			<li><strong>EnableServerCache</strong>: Set to true if server caching should be enabled</li>
+            <li><strong>ServerCacheExpiration</strong>: Set to seconds (Default: 1200)</li>
 			<li><strong>EnableSecurity</strong>: If set to true, only using bbimagehandler in a web page is allowed. Direct usage (eg: entering address in browser, no referer) is prohibited.  Also using it in a different domain is not possible (web page from http://www.domain-a.com uses http://www.domain-b.com/bbimagehandler.ashx...)</li>
 			<li><strong>EnableSecurityExceptions</strong>: Set to true if security exceptions should be thrown</li>
 			<li><strong>ImageCompression</strong>: quality of resulting image (0..100)</li> 

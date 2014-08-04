@@ -105,14 +105,30 @@ namespace Bitboxx.Web.GeneratedImage
             context.Response.Clear();
             context.Response.ContentType = GetImageMimeType(ContentType);
 
+            string cacheId = GetUniqueIDString(context, uniqueIdStringSeed);
+
             var cachePolicy = context.Response.Cache;
             cachePolicy.SetValidUntilExpires(true);
             if (EnableClientCache) {
+                if (!String.IsNullOrEmpty(context.Request.Headers["If-Modified-Since"]) && !String.IsNullOrEmpty(context.Request.Headers["If-None-Match"]))
+                {
+                    CultureInfo provider = CultureInfo.InvariantCulture;
+                    var lastMod = DateTime.ParseExact(context.Request.Headers["If-Modified-Since"], "r", provider).ToLocalTime();
+                    var etag = context.Request.Headers["If-None-Match"];
+                    if (lastMod + ClientCacheExpiration > DateTime_Now && etag == cacheId)
+                    {
+                        context.Response.StatusCode = 304;
+                        context.Response.StatusDescription = "Not Modified";
+                        context.Response.End();
+                        return;
+                    }
+                }
                 cachePolicy.SetCacheability(HttpCacheability.Public);
+                cachePolicy.SetLastModified(DateTime_Now);
                 cachePolicy.SetExpires(DateTime_Now + ClientCacheExpiration);
+                cachePolicy.SetETag(cacheId);
             }
 
-            string cacheId = GetUniqueIDString(context, uniqueIdStringSeed);
             if (EnableServerCache) {
                 if (ImageStore.TryTransmitIfContains(cacheId, context.Response)) {
                     context.Response.End();
