@@ -101,7 +101,6 @@ namespace Bitboxx.Web.GeneratedImage.Transform
 
             graphics.DrawImage(image, 0, 0);
 
-
 			SizeF sz = graphics.MeasureString(this.WatermarkText, watermarkFont);
 			Single x = 0;
 			Single y = 0;
@@ -149,7 +148,7 @@ namespace Bitboxx.Web.GeneratedImage.Transform
 			}
 			Brush watermarkBrush  = new SolidBrush(Color.FromArgb(WatermarkOpacity, FontColor));
 			graphics.DrawString(this.WatermarkText, watermarkFont, watermarkBrush, x, y);
-			return image;
+			return newBitmap;
 	
 		}
 

@@ -73,6 +73,8 @@ namespace Bitboxx.Web.GeneratedImage
 			EnableSecurityExceptions = true;
 			ImageCompression = 95;
 			AllowedDomains = new string[] {"localhost"};
+            DiskImageStore.PurgeInterval = new TimeSpan(0,5,0);
+            ClientCacheExpiration = new TimeSpan(0,10,0);
 
 			try
 			{
@@ -89,9 +91,15 @@ namespace Bitboxx.Web.GeneratedImage
 							case "enableclientcache":
 								EnableClientCache = Convert.ToBoolean(setting[1]);
 								break;
+                            case "clientcacheexpiration":
+						        ClientCacheExpiration = TimeSpan.FromSeconds(Convert.ToInt32(setting[1]));
+						        break;
 							case "enableservercache":
 								EnableServerCache = Convert.ToBoolean(setting[1]);
 								break;
+                            case "servercacheexpiration":
+                                DiskImageStore.PurgeInterval = TimeSpan.FromSeconds(Convert.ToInt32(setting[1]));
+                                break;
 							case "enablesecurity":
 								EnableSecurity = Convert.ToBoolean(setting[1]);
 								break;
