@@ -30,23 +30,7 @@ namespace Bitboxx.Web.GeneratedImage
 			    {
 			        FileInfo fi = new FileInfo(defaultImageFile);
 			        string format = fi.Extension;
-			        switch (format)
-			        {
-			            case "jpg":
-			            case "jpeg":
-			                ContentType = ImageFormat.Jpeg;
-			                break;
-			            case "bmp":
-			                ContentType = ImageFormat.Bmp;
-			                break;
-			            case "gif":
-			                ContentType = ImageFormat.Gif;
-			                break;
-			            case "png":
-			                ContentType = ImageFormat.Png;
-			                break;
-			        }
-
+			        ContentType = GetImageFormat(format) ?? ImageFormat.Png;
 			        if (File.Exists(defaultImageFile))
 			        {
 			            emptyBmp = new Bitmap(Image.FromFile(defaultImageFile, true));
@@ -196,43 +180,27 @@ namespace Bitboxx.Web.GeneratedImage
 				if (!String.IsNullOrEmpty(parameters["Format"]))
 				{
 					string format = parameters["Format"].ToLower();
-					switch (format)
-					{
-						case "jpg":
-						case "jpeg":
-							ContentType = ImageFormat.Jpeg;
-							break;
-						case "bmp":
-							ContentType = ImageFormat.Bmp;
-							break;
-						case "gif":
-							ContentType = ImageFormat.Gif;
-							break;
-						case "png":
-							ContentType = ImageFormat.Png;
-							break;
-						default:
-                            return new ImageInfo(EmptyImage);
-					}
+                    ImageFormat imgFormat = GetImageFormat(format);
+                    
+                    if (imgFormat == null)
+                        return new ImageInfo(EmptyImage);
+				    ContentType = imgFormat;
 				}
 				else if (imgFile != string.Empty)
 				{
-					FileInfo fi = new FileInfo(imgFile);
-					switch (fi.Extension.ToLower())
-					{
-						case ".jpg":
-							ContentType = ImageFormat.Jpeg;
-							break;
-						case ".gif":
-							ContentType = ImageFormat.Gif;
-							break;
-						case ".png":
-							ContentType = ImageFormat.Png;
-							break;
-						default:
-                            return new ImageInfo(EmptyImage);
-					}
+				    FileInfo fi = new FileInfo(imgFile);
+				    string format = fi.Extension.ToLower();
+				    ImageFormat imgFormat = GetImageFormat(format);
+
+				    if (imgFormat == null)
+				        return new ImageInfo(EmptyImage);
+				    ContentType = imgFormat;
 				}
+				else
+				{
+				    ContentType = ImageFormat.Png;
+				}
+
 
 				if (!string.IsNullOrEmpty(parameters["BackColor"]))
 				{
@@ -680,5 +648,30 @@ namespace Bitboxx.Web.GeneratedImage
 			}
 
 		}
-	}
+
+        private ImageFormat GetImageFormat(string format)
+        {
+            ImageFormat imgFormat;
+            switch (format)
+            {
+                case "jpg":
+                case "jpeg":
+                    imgFormat = ImageFormat.Jpeg;
+                    break;
+                case "bmp":
+                    imgFormat = ImageFormat.Bmp;
+                    break;
+                case "gif":
+                    imgFormat = ImageFormat.Gif;
+                    break;
+                case "png":
+                    imgFormat = ImageFormat.Png;
+                    break;
+                default:
+                    imgFormat = null;
+                    break;
+            }
+            return imgFormat;
+        }
+    }
 }
